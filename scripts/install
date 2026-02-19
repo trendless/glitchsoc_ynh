@@ -14,12 +14,12 @@ source /usr/share/yunohost/helpers
 admin_mail=$(ynh_user_get_info --username="$admin" --key=mail)
 
 # Initialize config_panel settings :<
-max_toot_chars="500"
+max_toot_chars="5000"
 max_pinned_toots="5"
-max_bio_chars="500"
+max_bio_chars="1000"
 max_profile_fields="4"
 max_display_name_chars="30"
-max_poll_options="5"
+max_poll_options="10"
 max_poll_option_chars="100"
 max_image_size="8388608"
 max_video_size="41943040"
@@ -120,7 +120,7 @@ pushd "$install_dir/live"
 	# Building assets
 	corepack enable
 	# This export might be removed in yunohost 12
-	 yarn install
+	yarn install
 	echo "SAFETY_ASSURED=1">> "$config"
 	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bundle exec rails db:migrate --quiet
 	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bundle exec rails db:seed --quiet
@@ -129,6 +129,10 @@ pushd "$install_dir/live"
 	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bundle exec rake mastodon:webpush:generate_vapid_key > key.txt
 	# Create the first admin user
 	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bin/tootctl accounts create "$admin" --email="$admin_mail" --confirmed --role=Owner --approve > /dev/null
+<<<<<<< Updated upstream
+=======
+	#ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bin/tootctl accounts approve "$admin" > /dev/null
+>>>>>>> Stashed changes
 popd
 
 # Re-generate config with vapid keys
@@ -140,10 +144,22 @@ ynh_safe_rm "$install_dir/live/key.txt"
 ynh_delete_file_checksum "$config"
 ynh_config_add --template=".env.production.sample" --destination="$config"
 
+
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression "Adding system configurations related to $app..."
+
+cat << EOF >> /etc/nginx/conf.d/$domain.conf
+
+upstream streaming {
+    least_conn;
+    server 127.0.0.1:4000 fail_timeout=0;
+    server 127.0.0.1:4001 fail_timeout=0;
+    server 127.0.0.1:4002 fail_timeout=0;
+    server 127.0.0.1:4003 fail_timeout=0;
+}
+EOF
 
 # Create a dedicated NGINX config using the conf/nginx.conf template
 ynh_config_add_nginx
@@ -154,9 +170,23 @@ yunohost service add "$app-web" --description="$app web service"
 
 ynh_config_add_systemd --service="$app-sidekiq" --template="glitchsoc-sidekiq.service"
 yunohost service add "$app-sidekiq" --description="$app sidekiq service"
+ynh_config_add_systemd --service="$app-sidekiq-default" --template="glitchsoc-sidekiq-default.service"
+yunohost service add "$app-sidekiq-default" --description="$app sidekiq-default service"
+ynh_config_add_systemd --service="$app-sidekiq-pull" --template="glitchsoc-sidekiq-pull.service"
+yunohost service add "$app-sidekiq-pull" --description="$app sidekiq-pull service"
+ynh_config_add_systemd --service="$app-sidekiq-push" --template="glitchsoc-sidekiq-push.service"
+yunohost service add "$app-sidekiq-push" --description="$app sidekiq-push service"
+ynh_config_add_systemd --service="$app-sidekiq-ingress" --template="glitchsoc-sidekiq-ingress.service"
+yunohost service add "$app-sidekiq-ingress" --description="$app sidekiq-ingress service"
 
 ynh_config_add_systemd --service="$app-streaming" --template="glitchsoc-streaming.service"
 yunohost service add "$app-streaming" --description="$app streaming service"
+ynh_config_add_systemd --service="$app-streaming-1" --template="glitchsoc-streaming-1.service"
+yunohost service add "$app-streaming-1" --description="$app streaming-1 service"
+ynh_config_add_systemd --service="$app-streaming-2" --template="glitchsoc-streaming-2.service"
+yunohost service add "$app-streaming-2" --description="$app streaming-2 service"
+ynh_config_add_systemd --service="$app-streaming-3" --template="glitchsoc-streaming-3.service"
+yunohost service add "$app-streaming-3" --description="$app streaming-3 service"
 
 # Create a cron file
 ynh_config_add --template="cron" --destination="/etc/cron.d/$app"
@@ -170,8 +200,15 @@ ynh_config_add_logrotate
 ynh_script_progression "Starting all systemd services..."
 
 ynh_systemctl --service="${app}-web" --action="start" --log_path="/var/log/$app/$app-web.log" --wait_until="Listening on"
+ynh_systemctl --service="${app}-sidekiq-default" --action="start" --log_path="/var/log/$app/$app-sidekiq-default.log"
+ynh_systemctl --service="${app}-sidekiq-pull" --action="start" --log_path="/var/log/$app/$app-sidekiq-pull.log"
+ynh_systemctl --service="${app}-sidekiq-push" --action="start" --log_path="/var/log/$app/$app-sidekiq-push.log"
+ynh_systemctl --service="${app}-sidekiq-ingress" --action="start" --log_path="/var/log/$app/$app-sidekiq-ingress.log"
 ynh_systemctl --service="${app}-sidekiq" --action="start" --log_path="/var/log/$app/$app-sidekiq.log" --wait_until="Schedules Loaded"
-ynh_systemctl --service="${app}-streaming" --action="start" --log_path="/var/log/$app/$app-streaming.log" --wait_until="Streaming API now listening"
+ynh_systemctl --service="${app}-streaming" --action="start" --log_path="/var/log/$app/$app-streaming-3.log"
+ynh_systemctl --service="${app}-streaming-1" --action="start" --log_path="/var/log/$app/$app-streaming-2.log"
+ynh_systemctl --service="${app}-streaming-2" --action="start" --log_path="/var/log/$app/$app-streaming-1.log"
+ynh_systemctl --service="${app}-streaming-3" --action="start" --log_path="/var/log/$app/$app-streaming.log" --wait_until="Streaming API now listening"
 
 #=================================================
 # END OF SCRIPT
