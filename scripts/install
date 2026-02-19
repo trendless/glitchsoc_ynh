@@ -124,7 +124,7 @@ pushd "$install_dir/live"
 	ynh_hide_warnings ynh_exec_as_app LD_PRELOAD=libjemalloc.so bundle install -j$(getconf _NPROCESSORS_ONLN)
 
 	# Building assets
-	corepack enable
+	ynh_hide_warnings corepack enable && corepack prepare yarn@latest --activate
 	# This export might be removed in yunohost 12
 	yarn install
 	echo "SAFETY_ASSURED=1">> "$config"
