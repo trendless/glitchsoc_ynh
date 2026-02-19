@@ -82,7 +82,8 @@ pushd "$install_dir/live"
 
 	# This export might be removed in yunohost 12
 
-	ynh_hide_warnings corepack enable && corepack prepare yarn@latest --activate
+	corepack enable
+	yarn install
 	if [ -d "$install_dir/live/public/assets" ]; then
 		ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bundle exec rails assets:clean
 	fi
