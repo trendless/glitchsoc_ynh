@@ -15,6 +15,7 @@ admin_mail=$(ynh_user_get_info --username="$admin" --key=mail)
 
 # Initialize config_panel settings :<
 max_toot_chars="5000"
+max_feed_hashtags="4"
 max_pinned_toots="5"
 max_bio_chars="1000"
 max_profile_fields="4"
@@ -171,27 +172,27 @@ EOF
 ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_config_add_systemd --service="$app-web" --template="glitchsoc-web.service"
+ynh_config_add_systemd --service="$app-web" --template="app-web.service"
 yunohost service add "$app-web" --description="$app web service"
 
-ynh_config_add_systemd --service="$app-sidekiq" --template="glitchsoc-sidekiq.service"
+ynh_config_add_systemd --service="$app-sidekiq" --template="app-sidekiq.service"
 yunohost service add "$app-sidekiq" --description="$app sidekiq service"
-ynh_config_add_systemd --service="$app-sidekiq-default" --template="glitchsoc-sidekiq-default.service"
+ynh_config_add_systemd --service="$app-sidekiq-default" --template="app-sidekiq-default.service"
 yunohost service add "$app-sidekiq-default" --description="$app sidekiq-default service"
-ynh_config_add_systemd --service="$app-sidekiq-pull" --template="glitchsoc-sidekiq-pull.service"
+ynh_config_add_systemd --service="$app-sidekiq-pull" --template="app-sidekiq-pull.service"
 yunohost service add "$app-sidekiq-pull" --description="$app sidekiq-pull service"
-ynh_config_add_systemd --service="$app-sidekiq-push" --template="glitchsoc-sidekiq-push.service"
+ynh_config_add_systemd --service="$app-sidekiq-push" --template="app-sidekiq-push.service"
 yunohost service add "$app-sidekiq-push" --description="$app sidekiq-push service"
-ynh_config_add_systemd --service="$app-sidekiq-ingress" --template="glitchsoc-sidekiq-ingress.service"
+ynh_config_add_systemd --service="$app-sidekiq-ingress" --template="app-sidekiq-ingress.service"
 yunohost service add "$app-sidekiq-ingress" --description="$app sidekiq-ingress service"
 
-ynh_config_add_systemd --service="$app-streaming" --template="glitchsoc-streaming.service"
+ynh_config_add_systemd --service="$app-streaming" --template="app-streaming.service"
 yunohost service add "$app-streaming" --description="$app streaming service"
-ynh_config_add_systemd --service="$app-streaming-1" --template="glitchsoc-streaming-1.service"
+ynh_config_add_systemd --service="$app-streaming-1" --template="app-streaming-1.service"
 yunohost service add "$app-streaming-1" --description="$app streaming-1 service"
-ynh_config_add_systemd --service="$app-streaming-2" --template="glitchsoc-streaming-2.service"
+ynh_config_add_systemd --service="$app-streaming-2" --template="app-streaming-2.service"
 yunohost service add "$app-streaming-2" --description="$app streaming-2 service"
-ynh_config_add_systemd --service="$app-streaming-3" --template="glitchsoc-streaming-3.service"
+ynh_config_add_systemd --service="$app-streaming-3" --template="app-streaming-3.service"
 yunohost service add "$app-streaming-3" --description="$app streaming-3 service"
 
 # Create a cron file

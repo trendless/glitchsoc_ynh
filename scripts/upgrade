@@ -85,11 +85,11 @@ pushd "$install_dir/live"
 	corepack enable
 	yarn install
 	if [ -d "$install_dir/live/public/assets" ]; then
-		ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production  LD_PRELOAD=libjemalloc.so bundle exec rails assets:clean
+		ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bundle exec rails assets:clean
 	fi
-	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production  LD_PRELOAD=libjemalloc.so bundle exec rails assets:precompile
-	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production  LD_PRELOAD=libjemalloc.so bundle exec rails db:migrate
-	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production  LD_PRELOAD=libjemalloc.so bin/tootctl cache clear
+	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bundle exec rails assets:precompile
+	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bundle exec rails db:migrate
+	ynh_hide_warnings ynh_exec_as_app RAILS_ENV=production LD_PRELOAD=libjemalloc.so bin/tootctl cache clear
 popd
 
 #=================================================
@@ -109,7 +109,7 @@ pushd "$install_dir/live"
 		if [ ynh_app_setting_get --key=es_enabled == "true" ] && [ ynh_app_setting_get --key=es_prefix == "" ]; then
 			ynh_app_setting_set --key=es_prefix --value=$redis_namespace
 		else
-			ynh_app_setting_delete --key=redis_namespace
+			ynh_app_setting_delete --key=redis_namespaceglitchsoc-
 		fi
 	fi
 popd
@@ -122,13 +122,13 @@ ynh_script_progression "Upgrading system configurations related to $app..."
 ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_config_add_systemd --service="$app-web" --template="glitchsoc-web.service"
+ynh_config_add_systemd --service="$app-web" --template="app-web.service"
 yunohost service add "$app-web" --description="$app web service"
 
-ynh_config_add_systemd --service="$app-sidekiq" --template="glitchsoc-sidekiq.service"
+ynh_config_add_systemd --service="$app-sidekiq" --template="app-sidekiq.service"
 yunohost service add "$app-sidekiq" --description="$app sidekiq service"
 
-ynh_config_add_systemd --service="$app-streaming" --template="glitchsoc-streaming.service"
+ynh_config_add_systemd --service="$app-streaming" --template="app-streaming.service"
 yunohost service add "$app-streaming" --description="$app streaming service"
 
 ynh_config_add --template="cron" --destination="/etc/cron.d/$app"

@@ -85,7 +85,7 @@ ynh_systemctl --service="${app}-web" --action="start" --log_path="/var/log/$app/
 ynh_systemctl --service="${app}-sidekiq" --action="start" --log_path="/var/log/$app/$app-sidekiq.log" --wait_until="Schedules Loaded"
 ynh_systemctl --service="${app}-streaming" --action="start" --log_path="/var/log/$app/$app-streaming.log" --wait_until="Streaming API now listening"
 
-ynh_systemctl --service=nginx --action=reload
+ynh_systemctl --service="nginx" --action="reload"
 
 #=================================================
 # END OF SCRIPT
