@@ -1,26 +1,29 @@
 [Unit]
-Description=__APP__-streaming
+Description=__APP__-sidekiq-default
 After=network.target
 
 [Service]
 Type=simple
 User=__APP__
 WorkingDirectory=__INSTALL_DIR__/live
-Environment="NODE_ENV=production"
-Environment="PORT=__PORT_STREAM__"
+Environment="LD_PRELOAD=libjemalloc.so"
+Environment="RAILS_ENV=production"
 Environment="DB_POOL=10"
-Environment="PATH=__PATH_WITH_NODEJS__"
-ExecStart=__NODEJS_DIR__/node ./streaming
+Environment="MALLOC_ARENA_MAX=2"
+Environment="PATH=__PATH_WITH_RUBY__"
+ExecStart=__RUBY_DIR__/bundle exec sidekiq -c $DB_POOL -q default,2 -q pull -q push -q ingress
 TimeoutSec=15
 Restart=always
-StandardOutput=append:/var/log/__APP__/__APP__-streaming.log
+StandardOutput=append:/var/log/__APP__/__APP__-sidekiq-default.log
 StandardError=inherit
 
 # Sandboxing options to harden security
 # Depending on specificities of your service/app, you may need to tweak these 
 # .. but this should be a good baseline
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
-NoNewPrivileges=yes
+# We need to disable everything that implie NoNewPrivileges=yes else sidekiq
+# can't deliver mail to YunoHost users. See #30 -Tagada
+NoNewPrivileges=no
 PrivateTmp=yes
 PrivateDevices=yes
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK

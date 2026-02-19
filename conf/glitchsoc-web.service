@@ -10,6 +10,8 @@ Environment="LD_PRELOAD=libjemalloc.so"
 Environment="RAILS_ENV=production"
 Environment="PORT=__PORT_WEB__"
 Environment="PATH=__PATH_WITH_RUBY__"
+Environment="WEB_CONCURRENCY=4"
+Environment="MAX_THREADS=10"
 ExecStart=__RUBY_DIR__/bundle exec puma -C config/puma.rb
 ExecReload=/bin/kill -SIGUSR1 $MAINPID
 TimeoutSec=15

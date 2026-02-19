@@ -42,7 +42,7 @@ ram.runtime = "500M"
     ask.fr = "Choisissez la langue de l'application"
     type = "select"
     choices = ["en_EN", "fr_FR"]
-    default = "fr_FR"
+    default = "en_EN"
 
     [install.admin]
     type = "user"
@@ -50,10 +50,10 @@ ram.runtime = "500M"
 [resources]
     [resources.sources]
         [resources.sources.main]
-        url = "https://github.com/glitch-soc/mastodon/archive/114105a78825d3e8ebef7824e842d99ef291fd16.tar.gz"
-        sha256 = "2988720860611184598ddb1157aa19713959e98ab907cefcfe1078cb4d13e56e"
+        url = "https://github.com/zeroesca/glitchsoc/archive/dc69b05c9664799d0e1d13643904c037e9cf5ba1.tar.gz"
+        sha256 = "bd6081e1be4818b24dc9a53cc11a4f64f321c466025cb0d808c8bca668d71c0a"
 
-        autoupdate.strategy = "latest_github_commit"
+        #autoupdate.strategy = "latest_github_commit"
 
         [resources.sources.redis_migration]
         url = "https://raw.githubusercontent.com/mastodon/redis_namespace_migration/refs/heads/main/rename.rb"
@@ -61,6 +61,10 @@ ram.runtime = "500M"
         in_subdir = false
         extract = false
         rename = "rename.rb"
+
+        #[resources.sources.tangerineui]
+        #url = "https://github.com/nileane/TangerineUI-for-Mastodon/archive/refs/tags/v2.4.4.tar.gz"
+        #sha256 = "61560342f1e927a55bebdd90ced7e5bb858e427753bd1b00ea7bf79e281684e0"
 
     [resources.system_user]
     allow_email = true
@@ -80,6 +84,9 @@ ram.runtime = "500M"
     [resources.ports]
     web.default = 3000
     stream.default = 4000
+    stream1.default = 4001
+    stream2.default = 4002
+    stream3.default = 4003
 
     [resources.apt]
     packages = "libvips42, imagemagick, ffmpeg, libpq-dev, libxml2-dev, libxslt1-dev, file, git, git-core, g++, libprotobuf-dev, protobuf-compiler, pkg-config, gcc, autoconf, bison, build-essential, libssl-dev, libyaml-dev, libreadline6-dev, zlib1g-dev, libncurses5-dev, libffi-dev, libgdbm6, libgdbm-dev, redis-tools, redis-server, postgresql, postgresql-contrib, libidn11-dev, libicu-dev, libjemalloc-dev, curl, apt-transport-https, yarn"
@@ -88,7 +95,7 @@ ram.runtime = "500M"
     type = "postgresql"
 
     [resources.nodejs]
-    version = "22"
+    version = "24"
 
     [resources.ruby]
     version = "3.4.5"

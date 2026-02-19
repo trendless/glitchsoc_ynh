@@ -8,10 +8,10 @@ User=__APP__
 WorkingDirectory=__INSTALL_DIR__/live
 Environment="LD_PRELOAD=libjemalloc.so"
 Environment="RAILS_ENV=production"
-Environment="DB_POOL=25"
+Environment="DB_POOL=10"
 Environment="MALLOC_ARENA_MAX=2"
 Environment="PATH=__PATH_WITH_RUBY__"
-ExecStart=__RUBY_DIR__/bundle exec sidekiq -c 25
+ExecStart=__RUBY_DIR__/bundle exec sidekiq -c $DB_POOL -q mailers,2 -q scheduler -q fasp
 TimeoutSec=15
 Restart=always
 StandardOutput=append:/var/log/__APP__/__APP__-sidekiq.log

@@ -1,5 +1,5 @@
 [Unit]
-Description=__APP__-streaming
+Description=__APP__-streaming-1
 After=network.target
 
 [Service]
@@ -7,13 +7,13 @@ Type=simple
 User=__APP__
 WorkingDirectory=__INSTALL_DIR__/live
 Environment="NODE_ENV=production"
-Environment="PORT=__PORT_STREAM__"
+Environment="PORT=__PORT_STREAM1__"
 Environment="DB_POOL=10"
 Environment="PATH=__PATH_WITH_NODEJS__"
 ExecStart=__NODEJS_DIR__/node ./streaming
 TimeoutSec=15
 Restart=always
-StandardOutput=append:/var/log/__APP__/__APP__-streaming.log
+StandardOutput=append:/var/log/__APP__/__APP__-streaming-1.log
 StandardError=inherit
 
 # Sandboxing options to harden security

@@ -20,17 +20,6 @@ if [[ -z "${service:-}" ]]; then
 	ynh_app_setting_set --key=service --value="$service"
 fi
 
-if ynh_app_upgrading_from_version_before 2024.05.01~ynh1; then
-	active_record_encryption_primary_key=$(ynh_string_random --length=32)
-	ynh_app_setting_set --key=active_record_encryption_primary_key --value="$active_record_encryption_primary_key"
-
-	active_record_encryption_deterministic_key=$(ynh_string_random --length=32)
-	ynh_app_setting_set --key=active_record_encryption_deterministic_key --value="$active_record_encryption_deterministic_key"
-
-	active_record_encryption_key_derivation_salt=$(ynh_string_random --length=32)
-	ynh_app_setting_set --key=active_record_encryption_key_derivation_salt --value="$active_record_encryption_key_derivation_salt"
-fi
-
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
@@ -39,13 +28,6 @@ ynh_script_progression "Stopping $app's systemd service..."
 ynh_systemctl --service="${app}-web" --action="stop" --log_path="/var/log/$app/$app-web.log"
 ynh_systemctl --service="${app}-sidekiq" --action="stop" --log_path="/var/log/$app/$app-sidekiq.log"
 ynh_systemctl --service="${app}-streaming" --action="stop" --log_path="/var/log/$app/$app-streaming.log"
-
-# Rename the database to match packaging v2 defaults db_name (`$app_production` to `$app`)
-if [[ $db_name = *'_production' ]]; then
-	ynh_psql_db_shell <<< "ALTER DATABASE $db_name RENAME TO $app;"
-	db_name=$app
-	ynh_app_setting_set --key=db_name --value=$db_name
-fi
 
 #=================================================
 # ADD SWAP IF NEEDED

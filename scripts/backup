@@ -25,7 +25,14 @@ ynh_backup "/etc/logrotate.d/$app"
 
 ynh_backup "/etc/systemd/system/$app-web.service"
 ynh_backup "/etc/systemd/system/$app-sidekiq.service"
+ynh_backup "/etc/systemd/system/$app-sidekiq-default.service"
+ynh_backup "/etc/systemd/system/$app-sidekiq-pull.service"
+ynh_backup "/etc/systemd/system/$app-sidekiq-push.service"
+ynh_backup "/etc/systemd/system/$app-sidekiq-ingress.service"
 ynh_backup "/etc/systemd/system/$app-streaming.service"
+ynh_backup "/etc/systemd/system/$app-streaming-1.service"
+ynh_backup "/etc/systemd/system/$app-streaming-2.service"
+ynh_backup "/etc/systemd/system/$app-streaming-3.service"
 
 #=================================================
 # BACKUP VARIOUS FILES
