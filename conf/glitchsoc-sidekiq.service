@@ -8,7 +8,7 @@ User=__APP__
 WorkingDirectory=__INSTALL_DIR__/live
 Environment="LD_PRELOAD=libjemalloc.so"
 Environment="RAILS_ENV=production"
-Environment="DB_POOL=10"
+Environment="DB_POOL=4"
 Environment="MALLOC_ARENA_MAX=2"
 Environment="PATH=__PATH_WITH_RUBY__"
 ExecStart=__RUBY_DIR__/bundle exec sidekiq -c $DB_POOL -q mailers,2 -q scheduler -q fasp
